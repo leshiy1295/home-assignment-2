@@ -13,11 +13,13 @@ class BlogDescription(Component):
     __DESCRIPTION_TITLE = '//p[@id="block_blog_info"]'
 
     def get_title(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__HEADER_TITLE).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__HEADER_TITLE)
         )
+        return self.driver.find_element_by_xpath(self.__HEADER_TITLE).text
 
     def get_description(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__DESCRIPTION_TITLE).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__DESCRIPTION_TITLE)
         )
+        return self.driver.find_element_by_xpath(self.__DESCRIPTION_TITLE).text

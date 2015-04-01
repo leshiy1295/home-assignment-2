@@ -1,6 +1,8 @@
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
+
 from tests import Component, POLLING_TIME, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN
+
 
 __author__ = 'a.halaidzhy'
 
@@ -48,14 +50,16 @@ class ResultContent(Component):
         }
 
     def get_status_message(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__STATUS_MESSAGE).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__STATUS_MESSAGE)
         )
+        return self.driver.find_element_by_xpath(self.__STATUS_MESSAGE).text
 
     def get_topic_title(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__TOPIC_TITLE).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_TITLE)
         )
+        return self.driver.find_element_by_xpath(self.__TOPIC_TITLE).text
 
     def press_edit_topic(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -80,19 +84,22 @@ class ResultContent(Component):
         return result_list
 
     def get_vote_button_text(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__VOTE_BUTTON).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_elements_by_xpath(self.__VOTE_BUTTON)
         )
+        return self.driver.find_elements_by_xpath(self.__VOTE_BUTTON).text
 
     def get_abstain_button_text(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__ABSTAIN_BUTTON).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_elements_by_xpath(self.__ABSTAIN_BUTTON)
         )
+        return self.driver.find_elements_by_xpath(self.__ABSTAIN_BUTTON).text
 
     def get_topic_content(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__TOPIC_CONTENT).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_elements_by_xpath(self.__TOPIC_CONTENT)
         )
+        return self.driver.find_elements_by_xpath(self.__TOPIC_CONTENT).text
 
     def get_topic_info(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -108,14 +115,15 @@ class ResultContent(Component):
         }
 
     def get_subscribe_status(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE).is_selected()
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE)
         )
+        return self.driver.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE).is_selected()
 
     def is_add_comment_link_present(self):
         try:
             WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-                lambda d: d.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE).is_selected()
+                lambda d: d.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE)
             )
             return True
         except TimeoutException:

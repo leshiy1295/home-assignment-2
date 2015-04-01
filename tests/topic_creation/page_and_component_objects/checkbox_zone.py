@@ -29,9 +29,10 @@ class CheckBoxZone(Component):
             add_poll_checkbox.click()
 
     def get_poll_question(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__POLL_QUESTION).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__POLL_QUESTION)
         )
+        return self.driver.find_element_by_xpath(self.__POLL_QUESTION).text
 
     def set_poll_question(self, question):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -40,9 +41,10 @@ class CheckBoxZone(Component):
         self.driver.find_element_by_xpath(self.__POLL_QUESTION).send_keys(question)
 
     def get_poll_answer_with_number(self, number):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__get_poll_answer_path_with_number(number)).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__get_poll_answer_path_with_number(number))
         )
+        return self.driver.find_element_by_xpath(self.__get_poll_answer_path_with_number(number)).text
 
     def get_poll_answers_count(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(

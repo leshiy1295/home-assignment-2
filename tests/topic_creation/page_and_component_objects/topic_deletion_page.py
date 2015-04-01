@@ -1,5 +1,7 @@
 from selenium.webdriver.support.wait import WebDriverWait
+
 from tests import Page, POLLING_TIME, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN
+
 
 __author__ = 'a.halaidzhy'
 

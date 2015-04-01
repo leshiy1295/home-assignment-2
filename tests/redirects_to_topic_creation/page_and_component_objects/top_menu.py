@@ -16,9 +16,10 @@ class TopMenu(Component):
     __TOPIC_ELEMENT_WORD = __TOPIC_ELEMENT + '/a[last()]'
 
     def get_username(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__USERNAME_ELEMENT).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__USERNAME_ELEMENT)
         )
+        return self.driver.find_element_by_xpath(self.__USERNAME_ELEMENT).text
 
     def open_create_popup(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(

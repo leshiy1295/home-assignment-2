@@ -14,9 +14,10 @@ class Content(Component):
     __TITLE_ELEMENT = '//div[@id="content"]//h2[contains(@class, "page-header")]'
 
     def get_title(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__TITLE_ELEMENT).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TITLE_ELEMENT)
         )
+        return self.driver.find_element_by_xpath(self.__TITLE_ELEMENT).text
 
     @property
     def get_form(self):

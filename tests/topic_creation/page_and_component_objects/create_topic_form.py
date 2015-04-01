@@ -13,7 +13,7 @@ __author__ = 'a.halaidzhy'
 
 class CreateTopicForm(Component):
     __FORM_ELEMENT = '//div[@id="content"]//form'
-    __BLOG_NAME = '//div[@id="id_blog"]'
+    __BLOG_NAME = '//div[@id="id_blog_chzn"]//span[1]'
     __TOPIC_TITLE = '//input[@id="id_title"]'
     __SUBMIT_BUTTON = __FORM_ELEMENT + '//button[contains(@class, "button-primary")]'
     __NEAREST_ERROR_LABEL = '/preceding-sibling::*[contains(@class, "system-message-error")][last()]'
@@ -23,19 +23,22 @@ class CreateTopicForm(Component):
             return '//label[contains(@for, "id_{}")]'.format(element) + self.__NEAREST_ERROR_LABEL
 
     def get_blog_name_error(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__get_error_label_path_for('blog')).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__get_error_label_path_for('blog'))
         )
+        return self.driver.find_element_by_xpath(self.__get_error_label_path_for('blog')).text
 
     def get_topic_header_error(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__get_error_label_path_for('title')).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__get_error_label_path_for('title'))
         )
+        return self.driver.find_element_by_xpath(self.__get_error_label_path_for('title')).text
 
     def get_blog_name(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__BLOG_NAME).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__BLOG_NAME)
         )
+        return self.driver.find_element_by_xpath(self.__BLOG_NAME).text
 
     def set_blog_name(self, text):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -48,9 +51,10 @@ class CreateTopicForm(Component):
                 break
 
     def get_topic_header(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__TOPIC_TITLE).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_TITLE)
         )
+        return self.driver.find_element_by_xpath(self.__TOPIC_TITLE).text
 
     def set_topic_header(self, text):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(

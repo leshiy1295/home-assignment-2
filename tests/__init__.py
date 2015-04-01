@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from time import sleep
-
 import urlparse
 import os
 import unittest
@@ -27,7 +26,7 @@ class SeleniumTest(unittest.TestCase):
         )
 
     def tearDown(self):
-        sleep(3) # Time for manual validation of final test result
+        sleep(3)  # Time for manual validation of final test result
         self.driver.quit()
 
 
@@ -38,8 +37,8 @@ class Page(object):
     def __init__(self, driver):
         self.driver = driver
 
-    def open(self):
-        url = urlparse.urljoin(self.BASE_URL, self.__PATH)
+    def open(self, path=__PATH):
+        url = urlparse.urljoin(self.BASE_URL, path)
         self.driver.get(url)
         self.driver.maximize_window()
 

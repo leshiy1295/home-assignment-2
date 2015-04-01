@@ -36,14 +36,16 @@ class TextZone(Component):
     __SELECT_USER_TO_ADD = __ADD_USER_POPUP + '//p[contains(@class, "realname")]/a[1]'
 
     def __set_tool(self, path):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(path).click()
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(path)
         )
+        self.driver.find_element_by_xpath(path).click()
 
     def get_error_label(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__TEXT_ZONE_ERROR_LABEL).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TEXT_ZONE_ERROR_LABEL)
         )
+        return self.driver.find_element_by_xpath(self.__TEXT_ZONE_ERROR_LABEL).text
 
     def set_text(self, text):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -52,9 +54,10 @@ class TextZone(Component):
         self.driver.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT).send_keys(text)
 
     def get_text(self):
-        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT).text
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT)
         )
+        return self.driver.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT).text
 
     def set_bold_tool(self):
         return self.__set_tool(self.__BOLD_ELEMENT)
