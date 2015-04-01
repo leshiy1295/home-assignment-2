@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+
 from selenium.webdriver.support.wait import WebDriverWait
-from tests import Component
+
+from tests import Component, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME, MAXIMUM_WAIT_TIME_FOR_JS
+
 
 __author__ = 'a.halaidzhy'
 
@@ -11,28 +14,43 @@ class AuthForm(Component):
     LOGIN = 'ftest16@tech-mail.ru'
     PASSWORD = os.environ.get('TTHA2PASSWORD', '')
 
-    _FORM = '//form[@id="popup-login-form"]'
+    __FORM = '//form[@id="popup-login-form"]'
 
-    _OPEN_FORM_ELEMENT = '//a[contains(@class, "trigger-login")]'
-    _FORM_LOGIN_FIELD = _FORM + '//input[@name="login"]'
-    _FORM_PASSWORD_FIELD = _FORM + '//input[@name="password"]'
-    _FORM_ERROR_LABEL = _FORM + '//p[contains(@class, "validate-error-login")]'
-    _FORM_SUBMIT_BUTTON = _FORM + '//button[@name="submit_login"]'
+    __OPEN_FORM_ELEMENT = '//a[contains(@class, "trigger-login")]'
+    __FORM_LOGIN_FIELD = __FORM + '//input[@name="login"]'
+    __FORM_PASSWORD_FIELD = __FORM + '//input[@name="password"]'
+    __FORM_ERROR_LABEL = __FORM + '//p[contains(@class, "validate-error-login")]'
+    __FORM_SUBMIT_BUTTON = __FORM + '//button[@name="submit_login"]'
 
     def open_form(self):
-        self.driver.find_element_by_xpath(self._OPEN_FORM_ELEMENT).click()
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__OPEN_FORM_ELEMENT)
+        )
+        self.driver.find_element_by_xpath(self.__OPEN_FORM_ELEMENT).click()
 
     def set_login(self, login):
-        self.driver.find_element_by_xpath(self._FORM_LOGIN_FIELD).send_keys(login)
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__FORM_LOGIN_FIELD)
+        )
+        self.driver.find_element_by_xpath(self.__FORM_LOGIN_FIELD).send_keys(login)
 
     def set_password(self, password):
-        self.driver.find_element_by_xpath(self._FORM_PASSWORD_FIELD).send_keys(password)
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__FORM_PASSWORD_FIELD)
+        )
+        self.driver.find_element_by_xpath(self.__FORM_PASSWORD_FIELD).send_keys(password)
 
     def submit_form(self):
-        self.driver.find_element_by_xpath(self._FORM_SUBMIT_BUTTON).click()
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON)
+        )
+        self.driver.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON).click()
 
     def is_submit_button_disabled(self):
-        return self.driver.find_element_by_xpath(self._FORM_SUBMIT_BUTTON).get_attribute('disabled')
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON)
+        )
+        return self.driver.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON).get_attribute('disabled')
 
     def log_in(self):
         self.open_form()
@@ -41,6 +59,6 @@ class AuthForm(Component):
         self.submit_form()
 
     def get_error_label_text(self):
-        return WebDriverWait(self.driver, 5, 0.1).until(
-            lambda d: d.find_element_by_xpath(self._FORM_ERROR_LABEL).text
+        return WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__FORM_ERROR_LABEL).text
         )

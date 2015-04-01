@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from tests import Page
-from tests.redirects_to_topic_creation.content import Content
-from tests.redirects_to_topic_creation.top_menu import TopMenu
+from tests.redirects_to_topic_creation.page_and_component_objects.content import Content
+from tests.redirects_to_topic_creation.page_and_component_objects.top_menu import TopMenu
 
 __author__ = 'a.halaidzhy'
 
