@@ -50,7 +50,7 @@ class AuthForm(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON)
         )
-        return self.driver.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON).get_attribute('disabled')
+        return self.driver.find_element_by_xpath(self.__FORM_SUBMIT_BUTTON).get_attribute('class')
 
     def log_in(self):
         self.open_form()
