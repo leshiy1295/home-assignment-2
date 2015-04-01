@@ -2,11 +2,15 @@
 
 import unittest
 import os
+
 from selenium import webdriver
+
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from tests.auth_form import AuthForm
-from tests.auth_page import AuthPage
-from tests.portal_main_page import PortalMainPage
+
+from tests.authorization.page_and_component_objects.auth_form import AuthForm
+from tests.authorization.page_and_component_objects.auth_page import AuthPage
+from tests.redirects_to_topic_creation.portal_main_page import PortalMainPage
+
 
 __author__ = 'a.halaidzhy'
 

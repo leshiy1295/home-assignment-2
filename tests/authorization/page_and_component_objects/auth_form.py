@@ -34,6 +34,12 @@ class AuthForm(Component):
     def is_submit_button_disabled(self):
         return self.driver.find_element_by_xpath(self._FORM_SUBMIT_BUTTON).get_attribute('disabled')
 
+    def log_in(self):
+        self.open_form()
+        self.set_login(self.LOGIN)
+        self.set_password(self.PASSWORD)
+        self.submit_form()
+
     def get_error_label_text(self):
         return WebDriverWait(self.driver, 5, 0.1).until(
             lambda d: d.find_element_by_xpath(self._FORM_ERROR_LABEL).text

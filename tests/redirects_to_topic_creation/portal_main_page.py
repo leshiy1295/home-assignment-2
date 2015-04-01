@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from tests import Page
-from tests.top_menu import TopMenu
+from tests.redirects_to_topic_creation.top_menu import TopMenu
 
 __author__ = 'a.halaidzhy'
 
