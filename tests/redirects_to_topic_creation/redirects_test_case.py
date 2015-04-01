@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 import os
 
@@ -14,6 +16,7 @@ __author__ = 'a.halaidzhy'
 
 class RedirectsTestCase(unittest.TestCase):
     _TOPIC_CREATE_URL = Page.BASE_URL + 'blog/topic/create/'
+    _TOPIC_CREATE_PAGE_HEADER = u'Создание топика'
 
     def setUp(self):
         browser = os.environ.get('TTHA2BROWSER', 'FIREFOX')
@@ -24,21 +27,25 @@ class RedirectsTestCase(unittest.TestCase):
         AuthPage(self.driver).log_in()
 
     def test_open_topic_creation_by_word(self):
-        portal_mail_page = PortalMainPage(self.driver)
-        top_menu = portal_mail_page.top_menu
+        portal_main_page = PortalMainPage(self.driver)
+        top_menu = portal_main_page.top_menu
 
         top_menu.open_create_popup()
         top_menu.choose_topic_by_word()
 
+        content = portal_main_page.content
+        self.assertIn(self._TOPIC_CREATE_PAGE_HEADER, content.get_title())
         self.assertEqual(self.driver.current_url, self._TOPIC_CREATE_URL)
 
     def test_open_topic_creation_by_image(self):
-        portal_mail_page = PortalMainPage(self.driver)
-        top_menu = portal_mail_page.top_menu
+        portal_main_page = PortalMainPage(self.driver)
+        top_menu = portal_main_page.top_menu
 
         top_menu.open_create_popup()
         top_menu.choose_topic_by_image()
 
+        content = portal_main_page.content
+        self.assertIn(self._TOPIC_CREATE_PAGE_HEADER, content.get_title())
         self.assertEqual(self.driver.current_url, self._TOPIC_CREATE_URL)
 
     def tearDown(self):
