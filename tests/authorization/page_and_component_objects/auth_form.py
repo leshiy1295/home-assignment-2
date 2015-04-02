@@ -32,13 +32,17 @@ class AuthForm(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__FORM_LOGIN_FIELD)
         )
-        self.driver.find_element_by_xpath(self.__FORM_LOGIN_FIELD).send_keys(login)
+        element = self.driver.find_element_by_xpath(self.__FORM_LOGIN_FIELD)
+        element.clear()
+        element.send_keys(login)
 
     def set_password(self, password):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__FORM_PASSWORD_FIELD)
         )
-        self.driver.find_element_by_xpath(self.__FORM_PASSWORD_FIELD).send_keys(password)
+        element = self.driver.find_element_by_xpath(self.__FORM_PASSWORD_FIELD)
+        element.clear()
+        element.send_keys(password)
 
     def submit_form(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(

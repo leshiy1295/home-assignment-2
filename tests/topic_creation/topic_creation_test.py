@@ -43,6 +43,16 @@ class TopicCreationTestCase(SeleniumTest):
     __SIMPLE_POLL_ANSWER_0 = u'Да ";)<script>alert(1)</script>'
     __SIMPLE_POLL_ANSWER_1 = u'Нет ;(" and 1 = 1 -- comment'
     __SIMPLE_POLL_ANSWER_2 = u'Затрудняюсь ответить \'"o_O"\''
+    __LARGE_TOPIC_HEADER = u'Просто топик с длинным названием - wow' * 10
+    __LARGE_SHORT_TEXT = u'Длинный текст для простого топика' * 10
+    __LARGE_TEXT = u'Длинный текст для простого топика' * 100
+    __ERROR_LABEL_LARGE_HEADER_TEXT = u'Убедитесь, что это значение содержит не более 250 символов'
+    __MAX_TOPIC_HEADER = u'X' * 250
+    __LARGE_LAST_TOPIC = {
+        'author': TopMenu.USERNAME,
+        'blog': CreateTopicForm.BLOG_NAME,
+        'title': __MAX_TOPIC_HEADER
+    }
 
     def setUp(self):
         super(TopicCreationTestCase, self).setUp()
@@ -181,6 +191,43 @@ class TopicCreationTestCase(SeleniumTest):
         self.assertTrue(result_page_content.get_subscribe_status())
         self.assertFalse(result_page_content.is_add_comment_link_present())
         self.assertTrue(result_page_content.is_in_draft())
+
+    def test_large_texts(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        self.assertIn(self.__CORRECT_SIMPLE_BLOG_DESCRIPTION,
+                      self.__topic_page.content.get_blog_description.get_description())
+
+        form.set_topic_header(self.__LARGE_TOPIC_HEADER)
+        short_text_zone = form.get_short_text_zone
+        short_text_zone.set_text(self.__LARGE_SHORT_TEXT)
+        text_zone = form.get_text_zone
+        text_zone.set_text(self.__LARGE_TEXT)
+        form.submit_form()
+
+        self.assertIn(self.__ERROR_LABEL_LARGE_HEADER_TEXT, form.get_topic_header_error())
+
+        form.set_topic_header(self.__MAX_TOPIC_HEADER)
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+        latest_topic = result_page_content.get_latest_topic()
+        topic_info = result_page_content.get_topic_info()
+
+        for key in self.__LARGE_LAST_TOPIC:
+            self.assertIn(self.__LARGE_LAST_TOPIC[key], latest_topic[key])
+        self.assertIn(self.__CORRECT_SIMPLE_SUCCESS_STATUS_MESSAGE, result_page_content.get_status_message())
+        self.assertIn(self.__MAX_TOPIC_HEADER, result_page_content.get_topic_title())
+        self.assertIn(self.__LARGE_TEXT, result_page_content.get_topic_content())
+        for key in self.__CORRECT_SIMPLE_TOPIC_INFO:
+            self.assertIn(self.__CORRECT_SIMPLE_TOPIC_INFO[key], topic_info[key])
+        self.assertTrue(result_page_content.get_subscribe_status())
+        self.assertTrue(result_page_content.is_add_comment_link_present())
+        self.assertFalse(result_page_content.is_in_draft())
 
     def tearDown(self):
         if self.should_remove:

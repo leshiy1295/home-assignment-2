@@ -112,7 +112,9 @@ class TextZone(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__ADD_USER_INPUT)
         )
-        self.driver.find_element_by_xpath(self.__ADD_USER_INPUT).send_keys(user)
+        element = self.driver.find_element_by_xpath(self.__ADD_USER_INPUT)
+        element.clear()
+        element.send_keys(user)
 
     def select_user(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(

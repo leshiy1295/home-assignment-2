@@ -78,7 +78,9 @@ class CheckBoxZone(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__POLL_QUESTION)
         )
-        self.driver.find_element_by_xpath(self.__POLL_QUESTION).send_keys(question)
+        element = self.driver.find_element_by_xpath(self.__POLL_QUESTION)
+        element.clear()
+        element.send_keys(question)
 
     def get_poll_answer_with_number(self, number):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
@@ -98,7 +100,9 @@ class CheckBoxZone(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__get_poll_answer_path_with_number(number))
         )
-        self.driver.find_element_by_xpath(self.__get_poll_answer_path_with_number(number)).send_keys(answer)
+        element = self.driver.find_element_by_xpath(self.__get_poll_answer_path_with_number(number))
+        element.clear()
+        element.send_keys(answer)
 
     def add_poll_answer(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(

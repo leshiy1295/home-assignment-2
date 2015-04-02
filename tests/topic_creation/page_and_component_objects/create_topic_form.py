@@ -64,7 +64,9 @@ class CreateTopicForm(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__TOPIC_TITLE)
         )
-        self.driver.find_element_by_xpath(self.__TOPIC_TITLE).send_keys(text)
+        element = self.driver.find_element_by_xpath(self.__TOPIC_TITLE)
+        element.clear()
+        element.send_keys(text)
 
     @property
     def get_short_text_zone(self):
