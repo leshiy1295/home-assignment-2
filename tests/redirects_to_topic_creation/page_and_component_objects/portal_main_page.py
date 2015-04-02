@@ -16,3 +16,7 @@ class PortalMainPage(Page):
     @property
     def content(self):
         return Content(self.driver)
+
+    def is_topic_removed(self, topic_info):
+        return not self.content.topic_exists(topic_info)
+

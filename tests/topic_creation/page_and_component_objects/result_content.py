@@ -1,4 +1,5 @@
-from selenium.common.exceptions import TimeoutException
+# -*- coding: utf-8 -*-
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 
 from tests import Component, POLLING_TIME, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN
@@ -16,7 +17,6 @@ class ResultContent(Component):
     __LATEST_TOPIC_AUTHOR = __LATEST_TOPIC + '//a[contains(@class, "author")]'
     __LATEST_TOPIC_BLOG = __LATEST_TOPIC + '//a[contains(@class, "stream-blog")]'
     __LATEST_TOPIC_TITLE = __LATEST_TOPIC + '//a[contains(@class, "stream-topic")]'
-    __LATEST_TOPIC_COMMENTS_COUNT = __LATEST_TOPIC + '//span[contains(@class, "block-item-comments")]'
     __TOPIC_TITLE = __HEADER_BLOCK + '//h1[contains(@class, "topic-title")]/a[1]'
     __TOPIC_INFO = __HEADER_BLOCK + '//a[contains(@class, "topic-blog")]'
     __ACTION_EDIT = __HEADER_BLOCK + '//a[contains(@class, "actions-edit")]'
@@ -33,6 +33,8 @@ class ResultContent(Component):
     __TOPIC_COMMENTS_COUNT = '//span[@id="count-comments"]'
     __TOPIC_COMMENT_SUBSCRIBE = '//input[@id="comment_subscribe"]'
     __COMMENT_ADD_ELEMENT = __CONTENT_BLOCK + '//a[contains(@class, "comment-add-link")]'
+    __DRAFT_TOPIC = __CONTENT_BLOCK + '//i[contains(@class, "icon-synio-topic-draft")]'
+    __LEFT_BLOCK = __CONTENT_BLOCK + '//div[contains(@class, "feed-left")]'
 
     def get_latest_topic(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -41,12 +43,10 @@ class ResultContent(Component):
         latest_topic_author = self.driver.find_element_by_xpath(self.__LATEST_TOPIC_AUTHOR).text
         latest_topic_blog = self.driver.find_element_by_xpath(self.__LATEST_TOPIC_BLOG).text
         latest_topic_title = self.driver.find_element_by_xpath(self.__LATEST_TOPIC_TITLE).text
-        latest_topic_comments_count = self.driver.find_element_by_xpath(self.__LATEST_TOPIC_COMMENTS_COUNT).text
         return {
             'author': latest_topic_author,
             'blog': latest_topic_blog,
-            'title': latest_topic_title,
-            'comments_count': latest_topic_comments_count
+            'title': latest_topic_title
         }
 
     def get_status_message(self):
@@ -85,25 +85,25 @@ class ResultContent(Component):
 
     def get_vote_button_text(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__VOTE_BUTTON)
+            lambda d: d.find_element_by_xpath(self.__VOTE_BUTTON)
         )
-        return self.driver.find_elements_by_xpath(self.__VOTE_BUTTON).text
+        return self.driver.find_element_by_xpath(self.__VOTE_BUTTON).text
 
     def get_abstain_button_text(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__ABSTAIN_BUTTON)
+            lambda d: d.find_element_by_xpath(self.__ABSTAIN_BUTTON)
         )
-        return self.driver.find_elements_by_xpath(self.__ABSTAIN_BUTTON).text
+        return self.driver.find_element_by_xpath(self.__ABSTAIN_BUTTON).text
 
     def get_topic_content(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__TOPIC_CONTENT)
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
         )
-        return self.driver.find_elements_by_xpath(self.__TOPIC_CONTENT).text
+        return self.driver.find_element_by_xpath(self.__TOPIC_CONTENT).text
 
     def get_topic_info(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__TOPIC_FOOTER_BLOCK)
+            lambda d: d.find_element_by_xpath(self.__TOPIC_FOOTER_BLOCK)
         )
         topic_author = self.driver.find_element_by_xpath(self.__TOPIC_AUTHOR).text
         topic_favourite = self.driver.find_element_by_xpath(self.__TOPIC_FAVOURITE).text
@@ -116,15 +116,26 @@ class ResultContent(Component):
 
     def get_subscribe_status(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-            lambda d: d.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE)
+            lambda d: d.find_element_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE)
         )
-        return self.driver.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE).is_selected()
+        return self.driver.find_element_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE).is_selected()
 
     def is_add_comment_link_present(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__LEFT_BLOCK)
+        )
         try:
-            WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
-                lambda d: d.find_elements_by_xpath(self.__TOPIC_COMMENT_SUBSCRIBE)
-            )
+            self.driver.find_element_by_xpath(self.__COMMENT_ADD_ELEMENT)
             return True
-        except TimeoutException:
+        except NoSuchElementException:
+            return False
+
+    def is_in_draft(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_TITLE)
+        )
+        try:
+            self.driver.find_element_by_xpath(self.__DRAFT_TOPIC)
+            return True
+        except NoSuchElementException:
             return False

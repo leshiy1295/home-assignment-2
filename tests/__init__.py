@@ -15,6 +15,13 @@ MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN = 30
 POLLING_TIME = 0.1
 
 
+def dont_remove_topic(func):
+    def wrapper(*args):
+        args[0].should_remove = False
+        return func(*args)
+    return wrapper
+
+
 class SeleniumTest(unittest.TestCase):
     __HUB_URL = 'http://127.0.0.1:4444/wd/hub'
     __BROWSER = os.environ.get('TTHA2BROWSER', 'FIREFOX')
