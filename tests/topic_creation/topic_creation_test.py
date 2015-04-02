@@ -17,7 +17,6 @@ __author__ = 'a.halaidzhy'
 
 
 class TopicCreationTestCase(SeleniumTest):
-    __PATH_TO_IMAGE = os.path.dirname(__file__) + '/res/image.jpg'
     __START_CREATE_TOPIC_PAGE_TITLE = u'Создание топика'
     __START_BLOG_DESCRIPTION_TITLE = u'Описание блога'
     __START_BLOG_DESCRIPTION = u'Выберите блог'
@@ -82,6 +81,13 @@ class TopicCreationTestCase(SeleniumTest):
     __IMAGE_LINK_EFFECT = u'![](http://www.example.com)'
     __IMAGE_LINK_TEST = u'http://www.example.com'
     __IMAGE_LINK_ALT_TEST = u'Описание'
+
+    __PATH_TO_IMAGE = os.path.dirname(__file__) + '/res/image.jpg'
+
+    __USER_NAME_TO_ADD = u'Sergey'
+    __USER_ADD_EFFECT = u'[Sergey Pacman](/profile/s.pacman/)'
+    __USER_ADD_TEST = u'/profile/s.pacman/'
+    __USER_ADD_TEXT_TEST = u'Sergey Pacman'
 
     def setUp(self):
         super(TopicCreationTestCase, self).setUp()
@@ -284,7 +290,7 @@ class TopicCreationTestCase(SeleniumTest):
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
 
-        self.assertIn(self.__BOLD_TEST_ASSERT, result_page_content.get_bold_topic_content())
+        self.assertIn(self.__BOLD_TEST_ASSERT, result_page_content.get_bold_text_topic_content())
 
     def test_italic_element(self):
         form = self.__topic_page.content.get_form
@@ -313,7 +319,7 @@ class TopicCreationTestCase(SeleniumTest):
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
 
-        self.assertIn(self.__ITALIC_TEST_ASSERT, result_page_content.get_italic_topic_content())
+        self.assertIn(self.__ITALIC_TEST_ASSERT, result_page_content.get_italic_text_topic_content())
 
     def test_quote_with_preview(self):
         form = self.__topic_page.content.get_form
@@ -363,7 +369,7 @@ class TopicCreationTestCase(SeleniumTest):
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
 
-        self.assertIn(self.__UNORDERED_LIST_TEST, result_page_content.get_unordered_list_topic_content())
+        self.assertIn(self.__UNORDERED_LIST_TEST, result_page_content.get_unordered_list_text_topic_content())
 
     def test_ordered_list_with_preview(self):
         form = self.__topic_page.content.get_form
@@ -388,7 +394,7 @@ class TopicCreationTestCase(SeleniumTest):
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
 
-        self.assertIn(self.__ORDERED_LIST_TEST, result_page_content.get_ordered_list_topic_content())
+        self.assertIn(self.__ORDERED_LIST_TEST, result_page_content.get_ordered_list_text_topic_content())
 
     def test_empty_link_with_preview(self):
         form = self.__topic_page.content.get_form
@@ -545,6 +551,35 @@ class TopicCreationTestCase(SeleniumTest):
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
         self.assertIn(self.__IMAGE_LINK_ALT_TEST, result_page_content.get_image_link_alt_topic_content())
+
+    def test_user_add_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_user_add_tool()
+        text_area.set_user_to_add(self.__USER_NAME_TO_ADD)
+        text_area.select_user()
+
+        self.assertIn(self.__USER_ADD_EFFECT, text_area.get_text())
+
+        text_area.trigger_preview_tool()
+
+        self.assertIn(self.__USER_ADD_TEST, text_area.get_link_href_from_preview_editor())
+        self.assertIn(self.__USER_ADD_TEXT_TEST, text_area.get_link_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+        self.assertIn(self.__USER_ADD_TEST, result_page_content.get_link_href_topic_content())
+        self.assertIn(self.__USER_ADD_TEXT_TEST, result_page_content.get_link_text_topic_content())
 
     def tearDown(self):
         if self.should_remove:

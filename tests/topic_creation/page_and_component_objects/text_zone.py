@@ -55,9 +55,9 @@ class TextZone(Component):
             '/a[contains(@class, "markdown-editor-icon-link")][2]'
         self.__PREVIEW_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
             '/a[contains(@class, "markdown-editor-icon-preview")]'
-        self.__ADD_USER_POPUP = '//form[@id="form-users-search"]'
+        self.__ADD_USER_LIST = '//tbody[@id="list-body"]'
         self.__ADD_USER_INPUT = '//input[@id="search-user-login-popup"]'
-        self.__SELECT_USER_TO_ADD = self.__ADD_USER_POPUP + '//p[contains(@class, "realname")]/a[1]'
+        self.__SELECT_USER_TO_ADD = self.__ADD_USER_LIST + '//p[contains(@class, "realname")]/a[1]'
         self.__NEAREST_PREVIEW_EDITOR = '/following::div[contains(@class, "editor-preview")]'
         self.__PREVIEW_EDITOR = self.__TEXTAREA_ELEMENT + self.__NEAREST_PREVIEW_EDITOR
 
@@ -119,7 +119,7 @@ class TextZone(Component):
     def trigger_preview_tool(self):
         return self.__trigger_tool(self.__PREVIEW_ELEMENT)
 
-    def trigger_user_to_add(self, user):
+    def set_user_to_add(self, user):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__ADD_USER_INPUT)
         )
