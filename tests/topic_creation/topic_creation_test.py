@@ -53,6 +53,13 @@ class TopicCreationTestCase(SeleniumTest):
         'blog': CreateTopicForm.BLOG_NAME,
         'title': __MAX_TOPIC_HEADER
     }
+    __BOLD_EFFECT = u'****'
+    __BOLD_TEST_INPUT = u'**Жирный текст**'
+    __BOLD_TEST_ASSERT = u'Жирный текст'
+
+    __ITALIC_EFFECT = u'**'
+    __ITALIC_TEST_INPUT = u'*Курсив*'
+    __ITALIC_TEST_ASSERT = u'Курсив'
 
     def setUp(self):
         super(TopicCreationTestCase, self).setUp()
@@ -228,6 +235,64 @@ class TopicCreationTestCase(SeleniumTest):
         self.assertTrue(result_page_content.get_subscribe_status())
         self.assertTrue(result_page_content.is_add_comment_link_present())
         self.assertFalse(result_page_content.is_in_draft())
+
+    def test_bold_element(self):
+        form = self.__topic_page.content.get_form
+
+        text_area = form.get_text_zone
+        text_area.trigger_bold_tool()
+        self.assertIn(self.__BOLD_EFFECT, text_area.get_text())
+
+    def test_bold_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.set_text(self.__BOLD_TEST_INPUT)
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__BOLD_TEST_ASSERT, text_area.get_bold_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__BOLD_TEST_ASSERT, result_page_content.get_bold_topic_content())
+
+    def test_italic_element(self):
+        form = self.__topic_page.content.get_form
+
+        text_area = form.get_text_zone
+        text_area.trigger_italic_tool()
+        self.assertIn(self.__ITALIC_EFFECT, text_area.get_text())
+
+    def test_italic_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.set_text(self.__ITALIC_TEST_INPUT)
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__ITALIC_TEST_ASSERT, text_area.get_italic_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__ITALIC_TEST_ASSERT, result_page_content.get_italic_topic_content())
 
     def tearDown(self):
         if self.should_remove:

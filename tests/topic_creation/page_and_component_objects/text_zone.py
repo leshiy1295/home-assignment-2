@@ -11,6 +11,9 @@ __author__ = 'a.halaidzhy'
 
 
 class TextZone(Component):
+    BOLD = '//strong'
+    ITALIC = '//em'
+
     def __init__(self, driver, is_short=False):
         super(TextZone, self).__init__(driver)
         if is_short:
@@ -49,8 +52,10 @@ class TextZone(Component):
         self.__ADD_USER_POPUP = '//form[@id="form-users-search"]'
         self.__ADD_USER_INPUT = '//input[@id="search-user-login-popup"]'
         self.__SELECT_USER_TO_ADD = self.__ADD_USER_POPUP + '//p[contains(@class, "realname")]/a[1]'
+        self.__NEAREST_PREVIEW_EDITOR = '/following::div[contains(@class, "editor-preview")]'
+        self.__PREVIEW_EDITOR = self.__TEXTAREA_ELEMENT + self.__NEAREST_PREVIEW_EDITOR
 
-    def __set_tool(self, path):
+    def __trigger_tool(self, path):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(path)
         )
@@ -78,37 +83,37 @@ class TextZone(Component):
         )
         return self.driver.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT_TO_GET).text
 
-    def set_bold_tool(self):
-        return self.__set_tool(self.__BOLD_ELEMENT)
+    def trigger_bold_tool(self):
+        return self.__trigger_tool(self.__BOLD_ELEMENT)
 
-    def set_italic_tool(self):
-        return self.__set_tool(self.__ITALIC_ELEMENT)
+    def trigger_italic_tool(self):
+        return self.__trigger_tool(self.__ITALIC_ELEMENT)
 
-    def set_quote_tool(self):
-        return self.__set_tool(self.__QUOTE_ELEMENT)
+    def trigger_quote_tool(self):
+        return self.__trigger_tool(self.__QUOTE_ELEMENT)
 
-    def set_unordered_list_tool(self):
-        return self.__set_tool(self.__UNORDERED_LIST_ELEMENT)
+    def trigger_unordered_list_tool(self):
+        return self.__trigger_tool(self.__UNORDERED_LIST_ELEMENT)
 
-    def set_ordered_list_tool(self):
-        return self.__set_tool(self.__ORDERER_LIST_ELEMENT)
+    def trigger_ordered_list_tool(self):
+        return self.__trigger_tool(self.__ORDERER_LIST_ELEMENT)
 
-    def set_link_tool(self):
-        return self.__set_tool(self.__LINK_ELEMENT)
+    def trigger_link_tool(self):
+        return self.__trigger_tool(self.__LINK_ELEMENT)
 
-    def set_image_insert_tool(self):
-        return self.__set_tool(self.__IMAGE_INSERT_ELEMENT)
+    def trigger_image_insert_tool(self):
+        return self.__trigger_tool(self.__IMAGE_INSERT_ELEMENT)
 
-    def set_image_load_tool(self):
-        return self.__set_tool(self.__IMAGE_LOAD_ELEMENT)
+    def trigger_image_load_tool(self):
+        return self.__trigger_tool(self.__IMAGE_LOAD_ELEMENT)
 
-    def set_user_add_tool(self):
-        return self.__set_tool(self.__USER_ADD_ELEMENT)
+    def trigger_user_add_tool(self):
+        return self.__trigger_tool(self.__USER_ADD_ELEMENT)
 
-    def set_preview_tool(self):
-        return self.__set_tool(self.__PREVIEW_ELEMENT)
+    def trigger_preview_tool(self):
+        return self.__trigger_tool(self.__PREVIEW_ELEMENT)
 
-    def set_user_to_add(self, user):
+    def trigger_user_to_add(self, user):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__ADD_USER_INPUT)
         )
@@ -144,3 +149,17 @@ class TextZone(Component):
         image_loader.click()
         image_loader.clear()
         image_loader.send_keys(path)
+
+    def get_bold_text_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(self.BOLD).text
+
+    def get_italic_text_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(self.ITALIC).text

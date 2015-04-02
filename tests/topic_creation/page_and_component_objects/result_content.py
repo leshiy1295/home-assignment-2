@@ -3,6 +3,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.wait import WebDriverWait
 
 from tests import Component, POLLING_TIME, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN
+from tests.topic_creation.page_and_component_objects.text_zone import TextZone
 
 
 __author__ = 'a.halaidzhy'
@@ -97,6 +98,20 @@ class ResultContent(Component):
             lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
         )
         return self.driver.find_element_by_xpath(self.__TOPIC_CONTENT).text
+
+    def get_bold_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.BOLD).text
+
+    def get_italic_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.ITALIC).text
 
     def get_topic_info(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
