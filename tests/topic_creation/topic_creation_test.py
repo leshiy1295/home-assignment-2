@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-from time import sleep
-from selenium.webdriver.common.keys import Keys
 
 from tests import SeleniumTest
 from tests.authorization.page_and_component_objects.auth_page import AuthPage
@@ -82,7 +80,8 @@ class TopicCreationTestCase(SeleniumTest):
     __IMAGE_LINK_TEST = u'http://www.example.com'
     __IMAGE_LINK_ALT_TEST = u'Описание'
 
-    __PATH_TO_IMAGE = os.path.dirname(__file__) + '/res/image.jpg'
+    __PATH_TO_IMAGE = os.path.dirname(__file__) + u'/page_and_component_objects/res/image.jpg'
+    __IMAGE_UPLOAD_TEST = u'.jpg'
 
     __USER_NAME_TO_ADD = u'Sergey'
     __USER_ADD_EFFECT = u'[Sergey Pacman](/profile/s.pacman/)'
@@ -551,6 +550,32 @@ class TopicCreationTestCase(SeleniumTest):
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
         self.assertIn(self.__IMAGE_LINK_ALT_TEST, result_page_content.get_image_link_alt_topic_content())
+
+
+    def test_image_load_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.upload_image(self.__PATH_TO_IMAGE)
+
+        self.assertIn(self.__IMAGE_UPLOAD_TEST, text_area.get_text())
+
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__IMAGE_UPLOAD_TEST, text_area.get_image_link_href_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__IMAGE_UPLOAD_TEST, result_page_content.get_image_link_href_topic_content())
 
     def test_user_add_with_preview(self):
         form = self.__topic_page.content.get_form

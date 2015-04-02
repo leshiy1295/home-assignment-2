@@ -49,8 +49,8 @@ class TextZone(Component):
             '/a[contains(@class, "markdown-editor-icon-link")][1]'
         self.__IMAGE_INSERT_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
             '/a[contains(@class, "markdown-editor-icon-image")][1]'
-        self.__IMAGE_LOAD_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
-            '/a[contains(@class, "markdown-editor-icon-image")][2]'
+        self.__IMAGE_LOAD_ELEMENT = '(//input[@name="filedata"])[2]'
+        self.__UPLOADED_IMAGE_LINK = '//span[contains(@class, "cm-string")]'
         self.__USER_ADD_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
             '/a[contains(@class, "markdown-editor-icon-link")][2]'
         self.__PREVIEW_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
@@ -60,6 +60,7 @@ class TextZone(Component):
         self.__SELECT_USER_TO_ADD = self.__ADD_USER_LIST + '//p[contains(@class, "realname")]/a[1]'
         self.__NEAREST_PREVIEW_EDITOR = '/following::div[contains(@class, "editor-preview")]'
         self.__PREVIEW_EDITOR = self.__TEXTAREA_ELEMENT + self.__NEAREST_PREVIEW_EDITOR
+        self.__SCRIPT_TO_SHOW_INPUT_FILE_ELEMENTS = '$(".markdown-upload-photo-container").show()'
 
     def __trigger_tool(self, path):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -151,10 +152,12 @@ class TextZone(Component):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__IMAGE_LOAD_ELEMENT)
         )
+        self.driver.execute_script(self.__SCRIPT_TO_SHOW_INPUT_FILE_ELEMENTS)
         image_loader = self.driver.find_element_by_xpath(self.__IMAGE_LOAD_ELEMENT)
-        image_loader.click()
-        image_loader.clear()
         image_loader.send_keys(path)
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__UPLOADED_IMAGE_LINK)
+        )
 
     def get_bold_text_from_preview_editor(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
