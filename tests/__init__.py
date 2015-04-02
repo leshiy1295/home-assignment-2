@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from time import sleep
 import urlparse
 import os
 import unittest
@@ -26,7 +25,6 @@ class SeleniumTest(unittest.TestCase):
         )
 
     def tearDown(self):
-        sleep(3)  # Time for manual validation of final test result
         self.driver.quit()
 
 
