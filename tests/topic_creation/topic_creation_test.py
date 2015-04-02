@@ -2,6 +2,7 @@
 
 import os
 from time import sleep
+from selenium.webdriver.common.keys import Keys
 
 from tests import SeleniumTest
 from tests.authorization.page_and_component_objects.auth_page import AuthPage
@@ -69,6 +70,18 @@ class TopicCreationTestCase(SeleniumTest):
 
     __ORDERED_LIST_EFFECT = u'1. '
     __ORDERED_LIST_TEST = u'Элемент нумерованного списка'
+
+    __EMPTY_LINK_EFFECT = u'[](null)'
+    __EMPTY_LINK_TEST = u'null'
+    __LINK_EFFECT = u'[](http://www.example.com)'
+    __LINK_TEST = u'http://www.example.com'
+    __LINK_TEXT_TEST = u'Ссылочка'
+
+    __EMPTY_IMAGE_LINK_EFFECT = u'![](null)'
+    __EMPTY_IMAGE_LINK_TEST = u'null'
+    __IMAGE_LINK_EFFECT = u'![](http://www.example.com)'
+    __IMAGE_LINK_TEST = u'http://www.example.com'
+    __IMAGE_LINK_ALT_TEST = u'Описание'
 
     def setUp(self):
         super(TopicCreationTestCase, self).setUp()
@@ -376,6 +389,162 @@ class TopicCreationTestCase(SeleniumTest):
         result_page_content = self.__published_topic_page.content
 
         self.assertIn(self.__ORDERED_LIST_TEST, result_page_content.get_ordered_list_topic_content())
+
+    def test_empty_link_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_link_tool()
+        text_area.open_alert_to_set_link()
+
+        text_area.dismiss_alert()
+
+        self.assertIn(self.__EMPTY_LINK_EFFECT, text_area.get_text())
+
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__EMPTY_LINK_TEST, text_area.get_link_href_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__EMPTY_LINK_TEST, result_page_content.get_link_href_topic_content())
+
+    def test_link_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_link_tool()
+        text_area.open_alert_to_set_link()
+        text_area.set_link_in_alert(self.__LINK_TEST)
+
+        self.assertIn(self.__LINK_EFFECT, text_area.get_text())
+
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__LINK_TEST, text_area.get_link_href_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__LINK_TEST, result_page_content.get_link_href_topic_content())
+
+    def test_link_text_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.set_link_as_text(self.__LINK_TEXT_TEST, self.__LINK_TEST)
+
+        text_area.trigger_preview_tool()
+
+        self.assertIn(self.__LINK_TEXT_TEST, text_area.get_link_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+        self.assertIn(self.__LINK_TEXT_TEST, result_page_content.get_link_text_topic_content())
+
+    def test_empty_image_link_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_image_insert_tool()
+        text_area.open_alert_to_set_link()
+
+        text_area.dismiss_alert()
+
+        self.assertIn(self.__EMPTY_IMAGE_LINK_EFFECT, text_area.get_text())
+
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__EMPTY_IMAGE_LINK_TEST, text_area.get_image_link_href_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__EMPTY_IMAGE_LINK_TEST, result_page_content.get_image_link_href_topic_content())
+
+    def test_image_link_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_image_insert_tool()
+        text_area.open_alert_to_set_link()
+        text_area.set_link_in_alert(self.__IMAGE_LINK_TEST)
+
+        self.assertIn(self.__IMAGE_LINK_EFFECT, text_area.get_text())
+
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__IMAGE_LINK_TEST, text_area.get_image_link_href_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__LINK_TEST, result_page_content.get_image_link_href_topic_content())
+
+    def test_image_link_alt_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.set_image_link_as_text(self.__IMAGE_LINK_ALT_TEST, self.__IMAGE_LINK_TEST)
+
+        text_area.trigger_preview_tool()
+
+        self.assertIn(self.__IMAGE_LINK_ALT_TEST, text_area.get_image_link_alt_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+        self.assertIn(self.__IMAGE_LINK_ALT_TEST, result_page_content.get_image_link_alt_topic_content())
 
     def tearDown(self):
         if self.should_remove:

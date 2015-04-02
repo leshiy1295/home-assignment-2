@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -16,6 +17,8 @@ class TextZone(Component):
     QUOTE = './/blockquote'
     UNORDERED_LIST = './/ul/li[1]'
     ORDERED_LIST = './/ol/li[1]'
+    LINK = './/a'
+    IMAGE = './/img'
 
     def __init__(self, driver, is_short=False):
         super(TextZone, self).__init__(driver)
@@ -45,9 +48,9 @@ class TextZone(Component):
         self.__LINK_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
             '/a[contains(@class, "markdown-editor-icon-link")][1]'
         self.__IMAGE_INSERT_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
-            '/a[contains(@class, "markdown-editor-icon-link")][1]'
+            '/a[contains(@class, "markdown-editor-icon-image")][1]'
         self.__IMAGE_LOAD_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
-            '/a[contains(@class, "markdown-editor-icon-link")][2]'
+            '/a[contains(@class, "markdown-editor-icon-image")][2]'
         self.__USER_ADD_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
             '/a[contains(@class, "markdown-editor-icon-link")][2]'
         self.__PREVIEW_ELEMENT = self.__TEXTAREA_ELEMENT + self.__NEAREST_TOOLBAR + \
@@ -187,3 +190,57 @@ class TextZone(Component):
         )
         preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
         return preview_editor.find_element_by_xpath(self.ORDERED_LIST).text
+
+    def get_link_href_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(TextZone.LINK).get_attribute('href')
+
+    def get_link_text_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(TextZone.LINK).text
+
+    def set_link_as_text(self, text, link):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT_TO_SET)
+        )
+        textarea = self.driver.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT_TO_SET)
+        actions = ActionChains(self.driver)
+        actions.click(textarea)
+        actions.send_keys(u'[' + text + u']')
+        actions.key_down(Keys.SHIFT).send_keys(u'9').key_down(Keys.SHIFT)
+        actions.send_keys(link + u')')
+        actions.perform()
+
+    def set_image_link_as_text(self, text, link):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT_TO_SET)
+        )
+        textarea = self.driver.find_element_by_xpath(self.__TEXT_INPUT_ELEMENT_TO_SET)
+        actions = ActionChains(self.driver)
+        actions.click(textarea)
+        actions.key_down(Keys.SHIFT).send_keys(u'1').key_down(Keys.SHIFT)
+        actions.send_keys(u'[' + text + u']')
+        actions.key_down(Keys.SHIFT).send_keys(u'9').key_down(Keys.SHIFT)
+        actions.send_keys(link + u')')
+        actions.perform()
+
+    def get_image_link_href_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(TextZone.IMAGE).get_attribute('src')
+
+    def get_image_link_alt_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(TextZone.IMAGE).get_attribute('alt')
+

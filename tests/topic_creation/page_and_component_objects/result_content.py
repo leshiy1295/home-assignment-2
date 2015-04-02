@@ -99,33 +99,61 @@ class ResultContent(Component):
         )
         return self.driver.find_element_by_xpath(self.__TOPIC_CONTENT).text
 
-    def get_bold_topic_content(self):
+    def get_bold_text_topic_content(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
         )
         content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
         return content.find_element_by_xpath(TextZone.BOLD).text
 
-    def get_italic_topic_content(self):
+    def get_italic_text_topic_content(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
         )
         content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
         return content.find_element_by_xpath(TextZone.ITALIC).text
 
-    def get_unordered_list_topic_content(self):
+    def get_unordered_list_text_topic_content(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
         )
         content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
         return content.find_element_by_xpath(TextZone.UNORDERED_LIST).text
 
-    def get_ordered_list_topic_content(self):
+    def get_ordered_list_text_topic_content(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
         )
         content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
         return content.find_element_by_xpath(TextZone.ORDERED_LIST).text
+
+    def get_link_href_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.LINK).get_attribute('href')
+
+    def get_link_text_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.LINK).text
+
+    def get_image_link_href_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.IMAGE).get_attribute('src')
+
+    def get_image_link_alt_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.IMAGE).get_attribute('alt')
 
     def get_topic_info(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
