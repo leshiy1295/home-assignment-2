@@ -14,13 +14,14 @@ class CheckBoxZone(Component):
     __FORBID_ELEMENT = '//input[@id="id_forbid_comment"]'
     __POLL_QUESTION = '//input[@id="id_question"]'
     __ADD_POLL_ANSWER = __FORM_ELEMENT + '//a[contains(@class, "add-poll-answer")]'
-    __REMOVE_POLL_ANSWER = __FORM_ELEMENT + '//a[contains(@class, "remove-poll-answer")]'
+    __REMOVE_POLL_ANSWER = __FORM_ELEMENT + \
+        '//a[contains(@class, "remove-poll-answer")][contains(@style, "inline-block")]'
     __QUESTION_LIST = '//ul[@id="question_list"]'
     __NEAREST_ERROR_LABEL = '/preceding-sibling::*[contains(@class, "system-message-error")][last()]'
     __ERROR_LABEL = '//label[@for="id_question"]' + __NEAREST_ERROR_LABEL
 
     def __get_poll_answer_path_with_number(self, number):
-        return '//input[@id="id_form-{}-answer"]'.format(number)
+        return '//input[@id="id_form-{}-answer"][@type="text"]'.format(number)
 
     def get_poll_add_element_status(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
@@ -29,12 +30,28 @@ class CheckBoxZone(Component):
         add_poll_checkbox = self.driver.find_element_by_xpath(self.__ADD_POLL_ELEMENT)
         return add_poll_checkbox.is_selected()
 
+    def set_publish_element_status(self, to_state):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PUBLISH_ELEMENT)
+        )
+        publish_checkbox = self.driver.find_element_by_xpath(self.__PUBLISH_ELEMENT)
+        if publish_checkbox.is_selected() != to_state:
+            publish_checkbox.click()
+
     def get_publish_element_status(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_element_by_xpath(self.__PUBLISH_ELEMENT)
         )
         publish_checkbox = self.driver.find_element_by_xpath(self.__PUBLISH_ELEMENT)
         return publish_checkbox.is_selected()
+
+    def set_forbid_element_status(self, to_state):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__FORBID_ELEMENT)
+        )
+        forbid_checkbox = self.driver.find_element_by_xpath(self.__FORBID_ELEMENT)
+        if forbid_checkbox.is_selected() != to_state:
+            forbid_checkbox.click()
 
     def get_forbid_status(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(

@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+from time import sleep
 
-from tests import SeleniumTest, dont_remove_topic
+from tests import SeleniumTest
 from tests.authorization.page_and_component_objects.auth_page import AuthPage
 from tests.redirects_to_topic_creation.page_and_component_objects.portal_main_page import PortalMainPage
 from tests.redirects_to_topic_creation.page_and_component_objects.top_menu import TopMenu
@@ -38,18 +39,20 @@ class TopicCreationTestCase(SeleniumTest):
         'favourite': "0",
         'vote_count': "0.0"
     }
+    __SIMPLE_POLL_QUESTION = u'Хорошо ли быть тестировщиком?'
+    __SIMPLE_POLL_ANSWER_0 = u'Да ";)<script>alert(1)</script>'
+    __SIMPLE_POLL_ANSWER_1 = u'Нет ;(" and 1 = 1 -- comment'
+    __SIMPLE_POLL_ANSWER_2 = u'Затрудняюсь ответить \'"o_O"\''
 
     def setUp(self):
         super(TopicCreationTestCase, self).setUp()
         AuthPage(self.driver).log_in()
-        self.should_remove = True
+        self.__topic_page = TopicCreationPage(self.driver)
+        self.__topic_page.open()
+        self.should_remove = False
 
-    @dont_remove_topic
     def test_start_state_of_page(self):
-        topic_page = TopicCreationPage(self.driver)
-        topic_page.open()
-
-        content = topic_page.content
+        content = self.__topic_page.content
         title = content.get_title()
 
         self.assertIn(self.__START_CREATE_TOPIC_PAGE_TITLE, title)
@@ -82,12 +85,8 @@ class TopicCreationTestCase(SeleniumTest):
         self.assertTrue(publish_element_checked)
         self.assertFalse(forbid_element_checked)
 
-    @dont_remove_topic
     def test_submit_without_any_data(self):
-        topic_page = TopicCreationPage(self.driver)
-        topic_page.open()
-
-        form = topic_page.content.get_form
+        form = self.__topic_page.content.get_form
         form.submit_form()
 
         checkbox_zone = form.get_checkbox_zone
@@ -97,18 +96,14 @@ class TopicCreationTestCase(SeleniumTest):
         self.assertIn(self.__ERROR_LABEL_TEXT, form.get_topic_header_error())
         self.assertIn(self.__ERROR_LABEL_TEXT, form.get_short_text_zone.get_error_label())
         self.assertIn(self.__ERROR_LABEL_TEXT, form.get_text_zone.get_error_label())
-    #     self.assertIn(self.__ERROR_LABEL_TEXT, checkbox_zone.get_error_label())
+        self.assertIn(self.__ERROR_LABEL_TEXT, checkbox_zone.get_error_label())
 
-    @dont_remove_topic
     def test_correct_simple_form_and_check_of_all_fields_on_result_page_with_manual_remove(self):
-        topic_page = TopicCreationPage(self.driver)
-        topic_page.open()
-
-        form = topic_page.content.get_form
+        form = self.__topic_page.content.get_form
         form.click_on_select_blog_name()
         form.set_blog_name()
 
-        self.assertIn(self.__CORRECT_SIMPLE_BLOG_DESCRIPTION, topic_page.content.get_blog_description.get_description())
+        self.assertIn(self.__CORRECT_SIMPLE_BLOG_DESCRIPTION, self.__topic_page.content.get_blog_description.get_description())
 
         form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
         short_text_zone = form.get_short_text_zone
@@ -138,7 +133,56 @@ class TopicCreationTestCase(SeleniumTest):
         main_page = PortalMainPage(self.driver)
         self.assertTrue(main_page.is_topic_removed(latest_topic))
 
+    def test_with_poll_with_3_answers_in_drafts_without_comments(self):
+        form = self.__topic_page.content.get_form
+
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+
+        short_text_zone = form.get_short_text_zone
+        text_zone = form.get_text_zone
+        checkbox_zone = form.get_checkbox_zone
+
+        short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+        text_zone.set_text(self.__CORRECT_SIMPLE_TEXT)
+        checkbox_zone.open_poll()
+        checkbox_zone.set_poll_question(self.__SIMPLE_POLL_QUESTION)
+        self.assertEqual(checkbox_zone.get_poll_answers_count(), 2)
+        checkbox_zone.set_poll_answer_with_number(0, self.__SIMPLE_POLL_ANSWER_0)
+        checkbox_zone.set_poll_answer_with_number(1, self.__SIMPLE_POLL_ANSWER_1)
+        checkbox_zone.add_poll_answer()
+        checkbox_zone.set_poll_answer_with_number(2, self.__SIMPLE_POLL_ANSWER_2)
+        checkbox_zone.remove_poll_answer()
+        self.assertEqual(checkbox_zone.get_poll_answers_count(), 2)
+        checkbox_zone.add_poll_answer()
+        checkbox_zone.set_poll_answer_with_number(2, self.__SIMPLE_POLL_ANSWER_2)
+        self.assertEqual(checkbox_zone.get_poll_answers_count(), 3)
+
+        checkbox_zone.set_publish_element_status(False)
+        checkbox_zone.set_forbid_element_status(True)
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+        latest_topic = result_page_content.get_latest_topic()
+        topic_info = result_page_content.get_topic_info()
+        poll_form_answers_count = result_page_content.get_poll_form_answers_count()
+
+        self.assertEqual(poll_form_answers_count, 3)
+        self.assertNotIn(self.__CORRECT_SIMPLE_LAST_TOPIC['author'], latest_topic['author'])
+        self.assertIn(self.__CORRECT_SIMPLE_SUCCESS_STATUS_MESSAGE, result_page_content.get_status_message())
+        self.assertIn(self.__CORRECT_SIMPLE_TOPIC_HEADER, result_page_content.get_topic_title())
+        self.assertIn(self.__CORRECT_SIMPLE_TEXT, result_page_content.get_topic_content())
+        for key in self.__CORRECT_SIMPLE_TOPIC_INFO:
+            self.assertIn(self.__CORRECT_SIMPLE_TOPIC_INFO[key], topic_info[key])
+        self.assertTrue(result_page_content.get_subscribe_status())
+        self.assertFalse(result_page_content.is_add_comment_link_present())
+        self.assertTrue(result_page_content.is_in_draft())
+
     def tearDown(self):
         if self.should_remove:
-            self.published_topic_page.remove()
+            self.__published_topic_page.remove()
         super(TopicCreationTestCase, self).tearDown()

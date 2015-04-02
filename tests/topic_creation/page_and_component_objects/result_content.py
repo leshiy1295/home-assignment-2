@@ -73,15 +73,12 @@ class ResultContent(Component):
         )
         self.driver.find_element_by_xpath(self.__ACTION_DELETE).click()
 
-    def get_poll_form_answers(self):
+    def get_poll_form_answers_count(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
             lambda d: d.find_elements_by_xpath(self.__POLL_ANSWERS)
         )
         poll_answers = self.driver.find_elements_by_xpath(self.__POLL_ANSWERS)
-        result_list = []
-        for answer in poll_answers:
-            result_list.append(answer.text)
-        return result_list
+        return len(poll_answers)
 
     def get_vote_button_text(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
