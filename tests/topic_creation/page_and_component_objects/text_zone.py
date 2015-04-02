@@ -11,8 +11,11 @@ __author__ = 'a.halaidzhy'
 
 
 class TextZone(Component):
-    BOLD = '//strong'
-    ITALIC = '//em'
+    BOLD = './/strong'
+    ITALIC = './/em'
+    QUOTE = './/blockquote'
+    UNORDERED_LIST = './/ul/li[1]'
+    ORDERED_LIST = './/ol/li[1]'
 
     def __init__(self, driver, is_short=False):
         super(TextZone, self).__init__(driver)
@@ -163,3 +166,24 @@ class TextZone(Component):
         )
         preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
         return preview_editor.find_element_by_xpath(self.ITALIC).text
+
+    def get_quote_text_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(self.QUOTE).text
+
+    def get_unordered_list_text_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(self.UNORDERED_LIST).text
+
+    def get_ordered_list_text_from_preview_editor(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_JS, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        )
+        preview_editor = self.driver.find_element_by_xpath(self.__PREVIEW_EDITOR)
+        return preview_editor.find_element_by_xpath(self.ORDERED_LIST).text

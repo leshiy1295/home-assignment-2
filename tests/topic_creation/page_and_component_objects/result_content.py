@@ -26,7 +26,7 @@ class ResultContent(Component):
     __POLL_ANSWERS = __POLL_BLOCK + '//ul[contains(@class, "poll-vote")]//input[contains(@class, "answer")]'
     __VOTE_BUTTON = __POLL_BLOCK + '//button[contains(@class, "vote")]'
     __ABSTAIN_BUTTON = __POLL_BLOCK + '//button[contains(@class, "abstain")]'
-    __TOPIC_CONTENT = __CONTENT_BLOCK + '//div[contains(@class, "topic-content")]/p[1]'
+    __TOPIC_CONTENT = __CONTENT_BLOCK + '//div[contains(@class, "topic-content")]'
     __TOPIC_FOOTER_BLOCK = __CONTENT_BLOCK + '//footer[contains(@class, "topic-footer")]'
     __TOPIC_AUTHOR = __TOPIC_FOOTER_BLOCK + '//a[@rel="author"]'
     __TOPIC_FAVOURITE = __TOPIC_FOOTER_BLOCK + '//span[contains(@class, "favourite-count")]'
@@ -112,6 +112,20 @@ class ResultContent(Component):
         )
         content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
         return content.find_element_by_xpath(TextZone.ITALIC).text
+
+    def get_unordered_list_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.UNORDERED_LIST).text
+
+    def get_ordered_list_topic_content(self):
+        WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(
+            lambda d: d.find_element_by_xpath(self.__TOPIC_CONTENT)
+        )
+        content = self.driver.find_element_by_xpath(self.__TOPIC_CONTENT)
+        return content.find_element_by_xpath(TextZone.ORDERED_LIST).text
 
     def get_topic_info(self):
         WebDriverWait(self.driver, MAXIMUM_WAIT_TIME_FOR_PAGE_OPEN, POLLING_TIME).until(

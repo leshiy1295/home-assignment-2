@@ -61,6 +61,15 @@ class TopicCreationTestCase(SeleniumTest):
     __ITALIC_TEST_INPUT = u'*Курсив*'
     __ITALIC_TEST_ASSERT = u'Курсив'
 
+    __QUOTE_EFFECT = u'> '
+    __QUOTE_TEST = u'Цитата'
+
+    __UNORDERED_LIST_EFFECT = u'* '
+    __UNORDERED_LIST_TEST = u'Элемент ненумерованного списка'
+
+    __ORDERED_LIST_EFFECT = u'1. '
+    __ORDERED_LIST_TEST = u'Элемент нумерованного списка'
+
     def setUp(self):
         super(TopicCreationTestCase, self).setUp()
         AuthPage(self.driver).log_in()
@@ -120,7 +129,8 @@ class TopicCreationTestCase(SeleniumTest):
         form.click_on_select_blog_name()
         form.set_blog_name()
 
-        self.assertIn(self.__CORRECT_SIMPLE_BLOG_DESCRIPTION, self.__topic_page.content.get_blog_description.get_description())
+        self.assertIn(self.__CORRECT_SIMPLE_BLOG_DESCRIPTION,
+                      self.__topic_page.content.get_blog_description.get_description())
 
         form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
         short_text_zone = form.get_short_text_zone
@@ -184,12 +194,10 @@ class TopicCreationTestCase(SeleniumTest):
         self.should_remove = True
         self.__published_topic_page = ResultPage(self.driver)
         result_page_content = self.__published_topic_page.content
-        latest_topic = result_page_content.get_latest_topic()
         topic_info = result_page_content.get_topic_info()
         poll_form_answers_count = result_page_content.get_poll_form_answers_count()
 
         self.assertEqual(poll_form_answers_count, 3)
-        self.assertNotIn(self.__CORRECT_SIMPLE_LAST_TOPIC['author'], latest_topic['author'])
         self.assertIn(self.__CORRECT_SIMPLE_SUCCESS_STATUS_MESSAGE, result_page_content.get_status_message())
         self.assertIn(self.__CORRECT_SIMPLE_TOPIC_HEADER, result_page_content.get_topic_title())
         self.assertIn(self.__CORRECT_SIMPLE_TEXT, result_page_content.get_topic_content())
@@ -293,6 +301,81 @@ class TopicCreationTestCase(SeleniumTest):
         result_page_content = self.__published_topic_page.content
 
         self.assertIn(self.__ITALIC_TEST_ASSERT, result_page_content.get_italic_topic_content())
+
+    def test_quote_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_quote_tool()
+        self.assertIn(self.__QUOTE_EFFECT, text_area.get_text())
+
+        text_area.set_text(self.__QUOTE_TEST)
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__QUOTE_TEST, text_area.get_quote_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__QUOTE_EFFECT + self.__QUOTE_TEST, result_page_content.get_topic_content())
+
+    def test_unordered_list_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_unordered_list_tool()
+        self.assertIn(self.__UNORDERED_LIST_EFFECT, text_area.get_text())
+
+        text_area.set_text(self.__UNORDERED_LIST_TEST)
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__UNORDERED_LIST_TEST, text_area.get_unordered_list_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__UNORDERED_LIST_TEST, result_page_content.get_unordered_list_topic_content())
+
+    def test_ordered_list_with_preview(self):
+        form = self.__topic_page.content.get_form
+        form.click_on_select_blog_name()
+        form.set_blog_name()
+
+        form.set_topic_header(self.__CORRECT_SIMPLE_TOPIC_HEADER)
+        form.get_short_text_zone.set_text(self.__CORRECT_SIMPLE_SHORT_TEXT)
+
+        text_area = form.get_text_zone
+
+        text_area.trigger_ordered_list_tool()
+        self.assertIn(self.__ORDERED_LIST_EFFECT, text_area.get_text())
+
+        text_area.set_text(self.__ORDERED_LIST_TEST)
+        text_area.trigger_preview_tool()
+        self.assertIn(self.__ORDERED_LIST_TEST, text_area.get_ordered_list_text_from_preview_editor())
+
+        form.submit_form()
+
+        self.should_remove = True
+        self.__published_topic_page = ResultPage(self.driver)
+        result_page_content = self.__published_topic_page.content
+
+        self.assertIn(self.__ORDERED_LIST_TEST, result_page_content.get_ordered_list_topic_content())
 
     def tearDown(self):
         if self.should_remove:
